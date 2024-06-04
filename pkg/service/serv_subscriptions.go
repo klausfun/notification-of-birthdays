@@ -16,3 +16,7 @@ func NewSubscriptionService(repo repository.Subscription) *SubscriptionService {
 func (s *SubscriptionService) CreateSubscription(userId int, subscription NotificationOfBirthdays.Subscription) (int, error) {
 	return s.repo.CreateSubscription(userId, subscription)
 }
+
+func (s *SubscriptionService) DeleteSubscription(userId, birthdayUserId int) error {
+	return s.repo.DeleteSubscription(userId, birthdayUserId)
+}

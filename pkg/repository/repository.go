@@ -12,6 +12,7 @@ type Authorization interface {
 
 type Subscription interface {
 	CreateSubscription(userId int, subscription NotificationOfBirthdays.Subscription) (int, error)
+	DeleteSubscription(userId, birthdayUserId int) error
 }
 
 type Profile interface {
