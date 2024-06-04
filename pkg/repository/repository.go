@@ -11,6 +11,7 @@ type Authorization interface {
 }
 
 type Subscription interface {
+	CreateSubscription(userId int, subscription NotificationOfBirthdays.Subscription) (int, error)
 }
 
 type Profile interface {
@@ -27,5 +28,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		Profile:       NewProfilePostgres(db),
+		Subscription:  NewSubscriptionPostgres(db),
 	}
 }

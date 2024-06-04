@@ -12,6 +12,7 @@ type Authorization interface {
 }
 
 type Subscription interface {
+	CreateSubscription(userId int, subscription NotificationOfBirthdays.Subscription) (int, error)
 }
 
 type Profile interface {
@@ -28,5 +29,6 @@ func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		Profile:       NewProfileService(repos.Profile),
+		Subscription:  NewSubscriptionService(repos.Subscription),
 	}
 }
