@@ -7,6 +7,7 @@ import (
 
 type Authorization interface {
 	CreateUser(user NotificationOfBirthdays.User) (int, error)
+	GenerateToken(password, email string) (NotificationOfBirthdays.Author, string, error)
 }
 
 type Subscription interface {
