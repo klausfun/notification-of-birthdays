@@ -1,8 +1,12 @@
 package service
 
-import "NotificationOfBirthdays/pkg/repository"
+import (
+	"NotificationOfBirthdays"
+	"NotificationOfBirthdays/pkg/repository"
+)
 
 type Authorization interface {
+	CreateUser(user NotificationOfBirthdays.User) (int, error)
 }
 
 type Subscription interface {
@@ -14,5 +18,7 @@ type Service struct {
 }
 
 func NewService(repos *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		Authorization: NewAuthService(repos.Authorization),
+	}
 }
