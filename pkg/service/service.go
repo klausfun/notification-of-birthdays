@@ -14,13 +14,19 @@ type Authorization interface {
 type Subscription interface {
 }
 
+type Profile interface {
+	GetUsers() ([]NotificationOfBirthdays.Author, error)
+}
+
 type Service struct {
 	Authorization
 	Subscription
+	Profile
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
+		Profile:       NewProfileService(repos.Profile),
 	}
 }

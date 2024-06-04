@@ -13,13 +13,19 @@ type Authorization interface {
 type Subscription interface {
 }
 
+type Profile interface {
+	GetUsers() ([]NotificationOfBirthdays.Author, error)
+}
+
 type Repository struct {
 	Authorization
 	Subscription
+	Profile
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
+		Profile:       NewProfilePostgres(db),
 	}
 }

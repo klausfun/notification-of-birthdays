@@ -9,6 +9,6 @@ type User struct {
 
 type Author struct {
 	Id    int    `json:"-" db:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name  string `json:"name" db:"name"`
+	Email string `json:"email" db:"email"`
 }
