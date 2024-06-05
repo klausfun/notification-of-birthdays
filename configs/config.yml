@@ -6,3 +6,7 @@ db:
   username: "postgres"
   dbname: "postgres"
   sslmode: "disable"
+
+notification:
+  pathToTheMessage: "cmd/message.html"
+  email: "nemurovartem8@gmail.com"

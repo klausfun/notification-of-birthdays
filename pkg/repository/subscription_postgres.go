@@ -28,7 +28,7 @@ func (r *SubscriptionPostgres) CreateSubscription(userId int, subscription Notif
 		"(subscriber_user_id, birthday_user_id, birthday_date, notification_date)"+
 		" values ($1, $2, $3, $4) RETURNING id", subscriptionsTable)
 	row := r.db.QueryRow(queryCreateSubscription, userId, subscription.BirthdayUserId,
-		subscription.BirthdayDate, subscription.NotificationDate)
+		subscription.BirthdayDate.TimeValue(), subscription.NotificationDate.TimeValue())
 	if err := row.Scan(&subscriptionId); err != nil {
 		return 0, err
 	}
@@ -49,4 +49,33 @@ func (r *SubscriptionPostgres) DeleteSubscription(userId, birthdayUserId int) er
 	}
 
 	return nil
+}
+
+func (r *SubscriptionPostgres) GetAllSubscriptions() ([]NotificationOfBirthdays.UserAndHisSubscriptions, error) {
+	var userAndSubscriptions []NotificationOfBirthdays.UserAndHisSubscriptions
+
+	var users []NotificationOfBirthdays.Author
+	queryUsers := fmt.Sprintf("SELECT id, name, email FROM %s", userTable)
+	err := r.db.Select(&users, queryUsers)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, curUser := range users {
+		var subscriptions []NotificationOfBirthdays.UserSubscription
+
+		queryUserSubscriptions := fmt.Sprintf("SELECT us.name, us.email,"+
+			" sub.birthday_user_id, sub.birthday_date, sub.notification_date"+
+			" FROM %s sub INNER JOIN %s us on sub.birthday_user_id = us.id"+
+			" WHERE sub.subscriber_user_id = $1", subscriptionsTable, userTable)
+		err = r.db.Select(&subscriptions, queryUserSubscriptions, curUser.Id)
+		if err != nil {
+			return nil, err
+		}
+
+		userAndSubscriptions = append(userAndSubscriptions,
+			NotificationOfBirthdays.UserAndHisSubscriptions{User: curUser, Subscriptions: subscriptions})
+	}
+
+	return userAndSubscriptions, nil
 }

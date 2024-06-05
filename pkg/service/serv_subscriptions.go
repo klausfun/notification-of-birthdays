@@ -20,3 +20,7 @@ func (s *SubscriptionService) CreateSubscription(userId int, subscription Notifi
 func (s *SubscriptionService) DeleteSubscription(userId, birthdayUserId int) error {
 	return s.repo.DeleteSubscription(userId, birthdayUserId)
 }
+
+func (s *SubscriptionService) GetAllSubscriptions() ([]NotificationOfBirthdays.UserAndHisSubscriptions, error) {
+	return s.repo.GetAllSubscriptions()
+}

@@ -7,6 +7,7 @@ import (
 	"NotificationOfBirthdays/pkg/service"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
@@ -41,6 +42,21 @@ func main() {
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
+
+	c := cron.New()
+	_, err = c.AddFunc("@every 1m", func() {
+		err := services.CheckAndSendNotifications()
+		if err != nil {
+			logrus.Error("Error sending notifications: ", err)
+		}
+	})
+	if err != nil {
+		logrus.Fatalf("error adding cron job: %s", err.Error())
+	}
+
+	c.Start()
+	logrus.Info("Cron job started")
+	defer c.Stop()
 
 	srv := new(NotificationOfBirthdays.Server)
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {

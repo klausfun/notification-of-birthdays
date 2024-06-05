@@ -13,7 +13,7 @@ func (h *Handler) createSubscription(c *gin.Context) {
 	}
 
 	var input NotificationOfBirthdays.Subscription
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -53,5 +53,21 @@ func (h *Handler) deleteSubscription(c *gin.Context) {
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "ok",
+	})
+}
+
+type getAllSubscriptionsResponse struct {
+	Data []NotificationOfBirthdays.UserAndHisSubscriptions `json:"data"`
+}
+
+func (h *Handler) getAllSubscriptions(c *gin.Context) {
+	subscriptions, err := h.services.Subscription.GetAllSubscriptions()
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getAllSubscriptionsResponse{
+		Data: subscriptions,
 	})
 }

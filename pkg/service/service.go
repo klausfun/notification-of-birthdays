@@ -14,16 +14,22 @@ type Authorization interface {
 type Subscription interface {
 	CreateSubscription(userId int, subscription NotificationOfBirthdays.Subscription) (int, error)
 	DeleteSubscription(userId, birthdayUserId int) error
+	GetAllSubscriptions() ([]NotificationOfBirthdays.UserAndHisSubscriptions, error)
 }
 
 type Profile interface {
 	GetUsers() ([]NotificationOfBirthdays.Author, error)
 }
 
+type Notification interface {
+	CheckAndSendNotifications() error
+}
+
 type Service struct {
 	Authorization
 	Subscription
 	Profile
+	Notification
 }
 
 func NewService(repos *repository.Repository) *Service {
@@ -31,5 +37,6 @@ func NewService(repos *repository.Repository) *Service {
 		Authorization: NewAuthService(repos.Authorization),
 		Profile:       NewProfileService(repos.Profile),
 		Subscription:  NewSubscriptionService(repos.Subscription),
+		Notification:  NewNotificationService(repos.Subscription),
 	}
 }
